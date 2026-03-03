@@ -35,7 +35,8 @@ async function requestApproval(client, originalMsg, hypeMessage) {
     collector.on('collect', async (reaction) => {
       if (reaction.emoji.name === APPROVE_EMOJI) {
         try {
-          const chatChannel = await client.channels.fetch(config.chatChannelId);
+          // TODO: Change to config.chatChannelId when ready to go live
+          const chatChannel = await client.channels.fetch(config.controlChannelId);
           await chatChannel.send(hypeMessage);
 
           const approvedEmbed = EmbedBuilder.from(embed)

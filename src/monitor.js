@@ -17,14 +17,41 @@ function isDuplicate(messageId) {
   return false;
 }
 
+async function checkLastMessages(client) {
+  console.log('[Monitor] Checking last messages in monitored channels...');
+  for (const channelId of config.monitorChannels) {
+    try {
+      const channel = await client.channels.fetch(channelId);
+      const messages = await channel.messages.fetch({ limit: 20 });
+      console.log(`[Monitor] Fetched ${messages.size} messages from #${channel.name || channelId}`);
+      messages.forEach((m) => {
+        console.log(`[Monitor]   - ${m.author.tag} (${m.author.id}) bot=${m.author.bot}: "${m.content?.slice(0, 50)}"`);
+      });
+      const targetMsg = messages.find(
+        (m) => m.author.id === config.targetUserId
+      );
+      if (targetMsg) {
+        console.log(`[Monitor] Found message from target user in #${channel.name || channelId}`);
+        const hypeMessage = await generateHypeMessage(
+          targetMsg.content || '[image/attachment post]'
+        );
+        console.log(`[Monitor] Generated hype: "${hypeMessage}"`);
+        await requestApproval(client, targetMsg, hypeMessage);
+      }
+    } catch (err) {
+      console.error(`[Monitor] Error checking channel ${channelId}:`, err.message);
+    }
+  }
+}
+
 function setupMonitor(client) {
+  // Check last messages on startup
+  client.once('ready', () => checkLastMessages(client));
+
   client.on('messageCreate', async (message) => {
     // Only react to target user in monitored channels
     if (message.author.id !== config.targetUserId) return;
     if (!config.monitorChannels.includes(message.channel.id)) return;
-
-    // Skip bot messages
-    if (message.author.bot) return;
 
     // Debounce
     if (isDuplicate(message.id)) return;
