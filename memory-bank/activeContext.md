@@ -1,17 +1,18 @@
 # Active Context
 
 ## Current Objective
-Get the Paxis Hype Bot running and connected to Discord.
+Test the full bot flow end-to-end (trigger → generate → approve → post).
 
 ## Immediate Next Task
-Fix the invalid Discord bot token — get a fresh token from the Developer Portal and update .env.
+Have user 1326346496530186241 post in a monitored channel while bot is running, then approve the hype message in the control channel.
 
 ## Relevant Files
 - `src/index.js` — entry point
-- `.env` — credentials (bot token is currently invalid)
+- `.env` — all credentials configured and working
 
 ## Constraints / Reminders
-- Bot token in .env is invalid — needs to be reset at https://discord.com/developers/applications
-- Must enable **Message Content Intent** under Bot → Privileged Gateway Intents
-- DeepSeek API key and all channel/user IDs are already configured
-- Owner user ID: 852744102684131329
+- Bot successfully logged in as **Test fanbot#8601**
+- Token, DeepSeek key, all channel/user IDs are configured
+- Bot has been added to the server with correct permissions
+- Deprecation warning about `ready` → `clientReady` is harmless (discord.js v15 prep)
+- Make sure **Message Content Intent** is enabled in Developer Portal under Bot → Privileged Gateway Intents

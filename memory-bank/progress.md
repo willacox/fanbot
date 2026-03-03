@@ -8,13 +8,14 @@
 - 2026-03-03 — Message monitor with 30s debounce (src/monitor.js)
 - 2026-03-03 — Bot entry point with discord.js client setup (src/index.js)
 - 2026-03-03 — Design doc and implementation plan written
+- 2026-03-03 — All credentials configured in .env
+- 2026-03-03 — Bot added to Discord server, successfully logged in as Test fanbot#8601
+- 2026-03-03 — Pushed to GitHub (https://github.com/willacox/fanbot.git)
 
 ## In Progress
-- Discord bot token is invalid — needs fresh token from Developer Portal
+- Full end-to-end integration test (trigger → approve → post)
 
 ## Next Steps
-1. Get valid Discord bot token and update .env
-2. Enable Message Content Intent in Discord Developer Portal
-3. Invite bot to server with correct permissions
-4. Run local integration test (manual test of full flow)
-5. Deploy to Railway
+1. Test full flow: target user posts → bot generates hype → approve in control channel → posted to chat
+2. Fix any issues found during testing
+3. Deploy to Railway for 24/7 operation
