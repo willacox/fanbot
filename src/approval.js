@@ -46,8 +46,7 @@ async function requestApproval(client, originalMsg, hypeMessage) {
         return resolve(false);
       }
 
-      // For edit: ask owner to type new message, then send that instead
-      let finalMessage = hypeMessage;
+      // For edit: ask owner to type new message, then re-queue for approval
       if (reaction.emoji.name === EDIT_EMOJI) {
         await controlChannel.send('请输入修改后的回复内容（5分钟内发送）：');
         try {
@@ -58,8 +57,12 @@ async function requestApproval(client, originalMsg, hypeMessage) {
             time: 5 * 60_000,
             errors: ['time'],
           });
-          finalMessage = collected.first().content;
-          console.log(`[Mo] 消息已编辑为: “${finalMessage}”`);
+          const editedMessage = collected.first().content;
+          console.log(`[Mo] 消息已编辑为: “${editedMessage}”`);
+          await approvalMsg.edit(`~~${approvalMsg.content}~~ \n\n**状态: 已编辑 ✏️ → 重新审批中**`);
+          // Re-queue edited message for approval
+          const result = await requestApproval(client, originalMsg, editedMessage);
+          return resolve(result);
         } catch {
           await controlChannel.send('超时未收到编辑内容，已取消。');
           await approvalMsg.edit(`~~${approvalMsg.content}~~ \n\n**状态: 编辑超时，已取消 ⏰**`);
@@ -67,10 +70,10 @@ async function requestApproval(client, originalMsg, hypeMessage) {
         }
       }
 
+      const finalMessage = hypeMessage;
       try {
         // 1. 更新审批频道的状态
-        const statusLabel = reaction.emoji.name === EDIT_EMOJI ? '已编辑并批准 ✏️✅' : '已批准 ✅';
-        await approvalMsg.edit(`~~${approvalMsg.content}~~ \n\n**状态: ${statusLabel}**\n**最终发送:** ${finalMessage}`);
+        await approvalMsg.edit(`~~${approvalMsg.content}~~ \n\n**状态: 已批准 ✅**\n**最终发送:** ${finalMessage}`);
 
         // 2. 模拟真人行为：随机延迟 30-90 秒
         const delay = Math.floor(Math.random() * (90000 - 30000 + 1) + 30000);
