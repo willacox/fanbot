@@ -6,6 +6,12 @@ const { requestApproval } = require('./approval');
 const recentTriggers = new Map();
 const DEBOUNCE_MS = 30_000;
 const MAX_AGE_MS = 10 * 60_000; // Only respond to messages within 10 minutes
+const IGNORED_TITLES = ['📊 日内短线交易计划'];
+
+/** Returns true if the message content starts with an ignored title */
+function shouldIgnore(content) {
+  return IGNORED_TITLES.some((title) => content.includes(title));
+}
 
 function isDuplicate(messageId) {
   const now = Date.now();
@@ -31,7 +37,8 @@ async function checkLastMessages(client) {
       const now = Date.now();
       const targetMsg = messages.find(
         (m) => config.targetUserIds.includes(m.author.id) &&
-               (now - m.createdTimestamp) < MAX_AGE_MS
+               (now - m.createdTimestamp) < MAX_AGE_MS &&
+               !shouldIgnore(m.content || '')
       );
       if (targetMsg) {
         console.log(`[Monitor] Found message from target user in #${channel.name || channelId}`);
@@ -85,6 +92,9 @@ function setupMonitor(client) {
 
     // Ignore messages older than 10 minutes
     if ((Date.now() - message.createdTimestamp) > MAX_AGE_MS) return;
+
+    // Skip trading plans
+    if (shouldIgnore(message.content || '')) return;
 
     // Debounce
     if (isDuplicate(message.id)) return;
