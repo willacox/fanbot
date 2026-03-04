@@ -5,6 +5,7 @@ const { requestApproval } = require('./approval');
 // Debounce: ignore duplicate triggers within 30s
 const recentTriggers = new Map();
 const DEBOUNCE_MS = 30_000;
+const MAX_AGE_MS = 10 * 60_000; // Only respond to messages within 10 minutes
 
 function isDuplicate(messageId) {
   const now = Date.now();
@@ -27,8 +28,10 @@ async function checkLastMessages(client) {
       messages.forEach((m) => {
         console.log(`[Monitor]   - ${m.author.tag} (${m.author.id}) bot=${m.author.bot}: "${m.content?.slice(0, 50)}"`);
       });
+      const now = Date.now();
       const targetMsg = messages.find(
-        (m) => m.author.id === config.targetUserId
+        (m) => config.targetUserIds.includes(m.author.id) &&
+               (now - m.createdTimestamp) < MAX_AGE_MS
       );
       if (targetMsg) {
         console.log(`[Monitor] Found message from target user in #${channel.name || channelId}`);
@@ -77,8 +80,11 @@ function setupMonitor(client) {
 
   client.on('messageCreate', async (message) => {
     // Only react to target user in monitored channels
-    if (message.author.id !== config.targetUserId) return;
+    if (!config.targetUserIds.includes(message.author.id)) return;
     if (!config.monitorChannels.includes(message.channel.id)) return;
+
+    // Ignore messages older than 10 minutes
+    if ((Date.now() - message.createdTimestamp) > MAX_AGE_MS) return;
 
     // Debounce
     if (isDuplicate(message.id)) return;

@@ -28,7 +28,7 @@ const config = {
   botToken: process.env.DISCORD_BOT_TOKEN,
   deepseekApiKey: process.env.DEEPSEEK_API_KEY,
   monitorChannels: process.env.MONITOR_CHANNELS?.split(',') || [],
-  targetUserId: process.env.TARGET_USER_ID,
+  targetUserIds: process.env.TARGET_USER_IDS?.split(',') || [],
   chatChannelId: process.env.CHAT_CHANNEL_ID,
   controlChannelId: process.env.CONTROL_CHANNEL_ID,
   ownerUserId: process.env.OWNER_USER_ID,
@@ -37,7 +37,7 @@ const config = {
 };
 
 // Validate required fields
-const required = ['botToken', 'deepseekApiKey', 'targetUserId', 'chatChannelId', 'controlChannelId', 'ownerUserId'];
+const required = ['botToken', 'deepseekApiKey', 'chatChannelId', 'controlChannelId', 'ownerUserId'];
 for (const key of required) {
   if (!config[key]) {
     console.error(`Missing required env var for: ${key}`);
