@@ -23,4 +23,5 @@ Test all features end-to-end across both servers, then redeploy.
 - Mo persona: calm, low-key, no hype stacking, no spaces between English/Chinese
 - Generator distinguishes: trade alert (mention ticker) vs recap (comment on overall) vs other (generic)
 - Edit flow: ✏️ reaction → Mo asks for edited text → 5min timeout → sends edited version
+- Heart reaction delay: 40-70 seconds (updated from 5-30s)
 - Debug logging in monitor.js still needs removal

@@ -13,7 +13,7 @@
 - **Mo persona** — calm, low-key trading student; context-aware replies (trade alert → mention ticker, recap → comment overall, other → generic)
 - **Three-way approval** — ✅ approve, ❌ reject, ✏️ edit (owner types replacement, 5min timeout)
 - **Human-like behavior** — random delay (30-90s) + typing indicator (5s) before posting approved messages
-- **Heart reactions** — 50% chance to react with random heart emoji (5-30s delay) on owner's messages in chat channels
+- **Heart reactions** — 50% chance to react with random heart emoji (40-70s delay) on owner's messages in chat channels
 - **Debounce** — 30s window to prevent duplicate triggers from same message
 - **Startup check** — on boot, fetches last 20 messages from each monitored channel to catch anything missed while offline
 

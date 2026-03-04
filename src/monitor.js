@@ -59,7 +59,7 @@ function setupMonitor(client) {
       Math.random() < HEART_CHANCE
     ) {
       try {
-        const delay = Math.floor(Math.random() * (30000 - 5000 + 1) + 5000);
+        const delay = Math.floor(Math.random() * (70000 - 40000 + 1) + 40000);
         setTimeout(async () => {
           try {
             const emoji = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)];

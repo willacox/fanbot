@@ -22,6 +22,7 @@
 - 2026-03-03 — Fixed missing `debug` dependency for discord.js-selfbot-v13
 - 2026-03-03 — Updated generator prompt: context-aware (trade alert vs recap), calm tone, no space between EN/CN
 - 2026-03-03 — Added edit flow to approval: ✏️ reaction lets owner rewrite Mo's message (5min timeout)
+- 2026-03-03 — Increased heart reaction delay to 40-70 seconds for more natural timing
 
 ## In Progress
 - Testing all features end-to-end across both servers
