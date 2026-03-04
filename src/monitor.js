@@ -47,7 +47,7 @@ async function checkLastMessages(client) {
   }
 }
 
-const HEART_CHANCE = 0.5;
+const HEART_CHANCE = 0.2;
 const HEART_EMOJIS = ['❤️', '💕', '😍', '🥰', '💗'];
 
 function setupMonitor(client) {
