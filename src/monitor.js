@@ -44,9 +44,36 @@ async function checkLastMessages(client) {
   }
 }
 
+const HEART_CHANCE = 0.5;
+const HEART_EMOJIS = ['❤️', '💕', '😍', '🥰', '💗'];
+
 function setupMonitor(client) {
   // Check last messages on startup
   client.once('ready', () => checkLastMessages(client));
+
+  // Randomly react with heart to owner's messages in chat channels
+  client.on('messageCreate', async (message) => {
+    if (
+      message.author.id === config.ownerUserId &&
+      config.chatChannels.includes(message.channel.id) &&
+      Math.random() < HEART_CHANCE
+    ) {
+      try {
+        const delay = Math.floor(Math.random() * (30000 - 5000 + 1) + 5000);
+        setTimeout(async () => {
+          try {
+            const emoji = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)];
+            await message.react(emoji);
+            console.log(`[Mo] Reacted ${emoji} to owner's message in #${message.channel.name}`);
+          } catch (err) {
+            console.error('[Mo] Failed to react:', err.message);
+          }
+        }, delay);
+      } catch (err) {
+        console.error('[Mo] Heart reaction error:', err.message);
+      }
+    }
+  });
 
   client.on('messageCreate', async (message) => {
     // Only react to target user in monitored channels

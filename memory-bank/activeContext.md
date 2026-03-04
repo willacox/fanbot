@@ -1,21 +1,25 @@
 # Active Context
 
 ## Current Objective
-Test the approval flow end-to-end and then go live.
+Test multi-server support and heart reaction feature, then redeploy.
 
 ## Immediate Next Task
-1. Test approval flow: react ✅ on embeds in control channel, verify approved message posts
-2. When satisfied, switch approval.js from control channel back to chat channel (config.chatChannelId) to go live
-3. Remove debug logging from monitor.js (the verbose message listing)
+1. Test approval flow across both servers — verify correct chat channel routing via SERVER_CHAT_MAP
+2. Verify heart reactions appear on owner's messages in chat channels (~50% chance, 5-30s delay)
+3. Remove debug logging from monitor.js
 4. Redeploy to Railway with final changes
 
 ## Relevant Files
-- `src/monitor.js` — has startup check + verbose debug logging (remove before production)
-- `src/approval.js` — currently routes approved messages to control channel (line 39, TODO comment marks where to change for go-live)
+- `src/index.js` — uses discord.js-selfbot-v13 with user token auth
+- `src/approval.js` — plain-text approvals, human-like delays, server-aware chat channel routing
+- `src/generator.js` — Mo persona (Chinese), updated fallback phrases
+- `src/config.js` — parses SERVER_CHAT_MAP and derives chatChannels list
+- `src/monitor.js` — hype monitoring + random heart reactions on owner's messages
 
 ## Constraints / Reminders
-- Target user `1326346496530186241` is a bot ("Will the ROCKET 机器人") — bot filter was removed
-- Startup check fetches last 20 messages per monitored channel
-- Bot successfully generated hype: "CRWD 太稳了！🔥" and "SPXL 冲啊！"
-- DeepSeek API is working correctly
-- Railway is deployed but needs redeployment after latest code changes
+- Now running as a selfbot (user token)
+- Two servers: 875099277351858256 → chat 938839311510548520, 1121213949736656966 → chat 1121667438254227506
+- SERVER_CHAT_MAP in .env drives chat channel routing per server
+- Heart reactions: 50% chance, random emoji from ❤️💕😍🥰💗, 5-30s delay
+- Debug logging in monitor.js still needs removal before production
+- Railway needs redeployment after latest code changes

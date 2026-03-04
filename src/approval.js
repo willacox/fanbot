@@ -11,11 +11,15 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 async function requestApproval(client, originalMsg, hypeMessage) {
   const controlChannel = await client.channels.fetch(config.controlChannelId);
 
+  // 获取触发消息所在的服务器名称，方便在审批时区分
+  const serverName = originalMsg.guild ? originalMsg.guild.name : '未知服务器';
+
   // 自用账号（Ghost Account）使用纯文本发送内部审批指令
   const approvalMsg = await controlChannel.send(
     `**[待审批消息 - Mo]**\n` +
+    `**来自服务器:** ${serverName}\n` +
     `**Will 哥的原帖:** ${originalMsg.content || '[图片/附件]'}\n` +
-    `**所在频道:** <#${originalMsg.channel.id}>\n` +
+    `**监控频道:** <#${originalMsg.channel.id}>\n` +
     `**Mo 的拟回覆:** ${hypeMessage}\n\n` +
     `点击 ${APPROVE_EMOJI} 批准发送 | 点击 ${REJECT_EMOJI} 拒绝`
   );
@@ -42,18 +46,27 @@ async function requestApproval(client, originalMsg, hypeMessage) {
 
           // 2. 模拟真人行为：随机延迟 30-90 秒
           const delay = Math.floor(Math.random() * (90000 - 30000 + 1) + 30000);
-          console.log(`[Mo] 审批通过。将在 ${Math.round(delay/1000)} 秒后发送...`);
+          console.log(`[Mo] 审批通过。将在 ${Math.round(delay/1000)} 秒后发送至服务器 "${serverName}"...`);
           await sleep(delay);
 
-          // 3. 模拟真人行为：显示“正在输入...”状态
-          const chatChannel = await client.channels.fetch(config.chatChannelId);
+          // 3. 动态确定目标聊天频道：按服务器ID查找对应的聊天频道，回退到默认
+          const guildId = originalMsg.guild?.id;
+          const chatChannelId = config.serverChatMap.get(guildId) || config.chatChannelId;
+          const chatChannel = await client.channels.fetch(chatChannelId).catch(() => null);
+
+          if (!chatChannel) {
+            console.error(`[Mo] 错误：无法在服务器 "${serverName}" 找到合适的聊天频道进行回复。`);
+            return resolve(false);
+          }
+
+          // 4. 模拟真人行为：显示“正在输入...”状态
           await chatChannel.sendTyping();
-          console.log(`[Mo] 正在模拟输入中 (5秒)...`);
+          console.log(`[Mo] 正在服务器 "${serverName}" 的 #${chatChannel.name} 频道模拟输入中 (5秒)...`);
           await sleep(5000); // 模拟打字 5 秒
 
-          // 4. 正式发送消息
+          // 5. 正式发送消息
           await chatChannel.send(hypeMessage);
-          console.log(`[Mo] 消息已成功发送至公共频道。`);
+          console.log(`[Mo] 消息已成功发送至 ${serverName} 的 #${chatChannel.name} 频道。`);
 
           resolve(true);
         } catch (err) {
@@ -66,8 +79,11 @@ async function requestApproval(client, originalMsg, hypeMessage) {
       }
     });
 
-    collector.on('collect', (reaction) => {
-      // 这里的逻辑已在上方 if/else 处理
+    collector.on('end', (collected) => {
+      if (collected.size === 0) {
+        approvalMsg.edit(`~~${approvalMsg.content}~~ \n\n**状态: 已过期 ⏰**`).catch(() => {});
+        resolve(false);
+      }
     });
   });
 }
