@@ -18,11 +18,15 @@
 - 2026-03-03 — Updated generator: Mo persona (Chinese), updated fallback phrases
 - 2026-03-03 — Approved messages now route to live chat channel (chatChannelId)
 - 2026-03-03 — Added multi-server support: SERVER_CHAT_MAP routes approved messages to correct chat channel per server
-- 2026-03-03 — Added random heart emoji reactions on owner's messages in chat channels (50% chance, 5-30s delay)
+- 2026-03-03 — Added random emoji reactions on owner's messages in chat channels
 - 2026-03-03 — Fixed missing `debug` dependency for discord.js-selfbot-v13
 - 2026-03-03 — Updated generator prompt: context-aware (trade alert vs recap), calm tone, no space between EN/CN
 - 2026-03-03 — Added edit flow to approval: ✏️ reaction lets owner rewrite Mo's message (5min timeout)
-- 2026-03-03 — Increased heart reaction delay to 40-70 seconds for more natural timing
+- 2026-03-03 — Increased reaction delay to 40-70 seconds
+- 2026-03-03 — Reduced reaction chance from 50% to 20%
+- 2026-03-03 — Added multiple target user IDs support (TARGET_USER_IDS)
+- 2026-03-03 — Added 10-minute message age limit (ignores old messages on startup)
+- 2026-03-03 — AI-powered emoji reactions: DeepSeek picks contextually appropriate emoji based on message content
 
 ## In Progress
 - Testing all features end-to-end across both servers

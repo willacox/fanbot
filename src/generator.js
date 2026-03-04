@@ -67,4 +67,43 @@ async function generateHypeMessage(originalMessage) {
   }
 }
 
-module.exports = { generateHypeMessage };
+const FALLBACK_EMOJIS = ['❤️', '💕', '🚀', '👍', '🔥', '😍'];
+
+async function pickReactionEmoji(messageContent) {
+  try {
+    const response = await client.chat.completions.create({
+      model: 'deepseek-chat',
+      messages: [
+        {
+          role: 'system',
+          content: `你是一个Discord用户，需要对一条消息选择一个合适的emoji表情作为reaction。
+          只输出一个emoji，不要输出任何其他内容。
+          根据消息内容选择最合适的emoji：
+          - 开心/庆祝的内容：🎉 🥳 😄
+          - 感谢/温暖的内容：❤️ 💕 🥰
+          - 赚钱/盈利的内容：🚀 💰 🔥
+          - 加油/鼓励的内容：💪 👊 ✊
+          - 学习/知识的内容：📚 🧠 👍
+          - 搞笑/有趣的内容：😂 🤣 😆
+          - 一般认同：👍 ❤️ 🙌
+          只输出一个emoji。`,
+        },
+        {
+          role: 'user',
+          content: messageContent || '👍',
+        },
+      ],
+      max_tokens: 10,
+      temperature: 1.0,
+    });
+
+    const text = response.choices[0]?.message?.content?.trim();
+    if (!text) throw new Error('Empty response');
+    return text;
+  } catch (err) {
+    console.error('[Mo] Emoji选择失败，使用随机:', err.message);
+    return FALLBACK_EMOJIS[Math.floor(Math.random() * FALLBACK_EMOJIS.length)];
+  }
+}
+
+module.exports = { generateHypeMessage, pickReactionEmoji };

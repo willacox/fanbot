@@ -1,5 +1,5 @@
 const config = require('./config');
-const { generateHypeMessage } = require('./generator');
+const { generateHypeMessage, pickReactionEmoji } = require('./generator');
 const { requestApproval } = require('./approval');
 
 // Debounce: ignore duplicate triggers within 30s
@@ -48,7 +48,7 @@ async function checkLastMessages(client) {
 }
 
 const HEART_CHANCE = 0.2;
-const REACT_EMOJIS = ['❤️', '💕', '😍', '🥰', '💗', '🚀'];
+const FALLBACK_EMOJIS = ['❤️', '💕', '😍', '🥰', '💗', '🚀'];
 
 function setupMonitor(client) {
   // Check last messages on startup
@@ -65,7 +65,7 @@ function setupMonitor(client) {
         const delay = Math.floor(Math.random() * (70000 - 40000 + 1) + 40000);
         setTimeout(async () => {
           try {
-            const emoji = REACT_EMOJIS[Math.floor(Math.random() * REACT_EMOJIS.length)];
+            const emoji = await pickReactionEmoji(message.content);
             await message.react(emoji);
             console.log(`[Mo] Reacted ${emoji} to owner's message in #${message.channel.name}`);
           } catch (err) {
