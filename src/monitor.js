@@ -6,11 +6,15 @@ const { requestApproval } = require('./approval');
 const recentTriggers = new Map();
 const DEBOUNCE_MS = 30_000;
 const MAX_AGE_MS = 10 * 60_000; // Only respond to messages within 10 minutes
-const IGNORED_TITLES = ['📊 日内短线交易计划'];
+const PROFIT_ALERT_TITLE = '📈 日内短线盈利提醒';
+const MIN_PROFIT_PCT = 2.0;
 
-/** Returns true if the message content starts with an ignored title */
-function shouldIgnore(content) {
-  return IGNORED_TITLES.some((title) => content.includes(title));
+/** Only respond to profit alerts with profit > 2% */
+function shouldRespond(content) {
+  if (!content.includes(PROFIT_ALERT_TITLE)) return false;
+  const match = content.match(/Profit:\s*\+?([\d.]+)%/);
+  if (!match) return false;
+  return parseFloat(match[1]) >= MIN_PROFIT_PCT;
 }
 
 function isDuplicate(messageId) {
@@ -38,7 +42,7 @@ async function checkLastMessages(client) {
       const targetMsg = messages.find(
         (m) => config.targetUserIds.includes(m.author.id) &&
                (now - m.createdTimestamp) < MAX_AGE_MS &&
-               !shouldIgnore(m.content || '')
+               shouldRespond(m.content || '')
       );
       if (targetMsg) {
         console.log(`[Monitor] Found message from target user in #${channel.name || channelId}`);
@@ -93,8 +97,8 @@ function setupMonitor(client) {
     // Ignore messages older than 10 minutes
     if ((Date.now() - message.createdTimestamp) > MAX_AGE_MS) return;
 
-    // Skip trading plans
-    if (shouldIgnore(message.content || '')) return;
+    // Only respond to profit alerts with >= 2% profit
+    if (!shouldRespond(message.content || '')) return;
 
     // Debounce
     if (isDuplicate(message.id)) return;
