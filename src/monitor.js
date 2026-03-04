@@ -48,7 +48,7 @@ async function checkLastMessages(client) {
 }
 
 const HEART_CHANCE = 0.2;
-const HEART_EMOJIS = ['❤️', '💕', '😍', '🥰', '💗'];
+const REACT_EMOJIS = ['❤️', '💕', '😍', '🥰', '💗', '🚀'];
 
 function setupMonitor(client) {
   // Check last messages on startup
@@ -65,7 +65,7 @@ function setupMonitor(client) {
         const delay = Math.floor(Math.random() * (70000 - 40000 + 1) + 40000);
         setTimeout(async () => {
           try {
-            const emoji = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)];
+            const emoji = REACT_EMOJIS[Math.floor(Math.random() * REACT_EMOJIS.length)];
             await message.react(emoji);
             console.log(`[Mo] Reacted ${emoji} to owner's message in #${message.channel.name}`);
           } catch (err) {
