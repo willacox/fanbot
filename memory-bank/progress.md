@@ -19,12 +19,15 @@
 - 2026-03-03 — Approved messages now route to live chat channel (chatChannelId)
 - 2026-03-03 — Added multi-server support: SERVER_CHAT_MAP routes approved messages to correct chat channel per server
 - 2026-03-03 — Added random heart emoji reactions on owner's messages in chat channels (50% chance, 5-30s delay)
+- 2026-03-03 — Fixed missing `debug` dependency for discord.js-selfbot-v13
+- 2026-03-03 — Updated generator prompt: context-aware (trade alert vs recap), calm tone, no space between EN/CN
+- 2026-03-03 — Added edit flow to approval: ✏️ reaction lets owner rewrite Mo's message (5min timeout)
 
 ## In Progress
-- Testing multi-server approval flow and heart reactions
+- Testing all features end-to-end across both servers
 
 ## Next Steps
-1. Test across both servers (approval routing + heart reactions)
+1. Test approval flow (approve/reject/edit) across both servers
 2. Remove debug logging from monitor.js
 3. Redeploy to Railway with final code
 4. Only trigger on 盈利提醒 (profit alerts) not all messages? (discuss with user)

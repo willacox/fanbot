@@ -10,8 +10,8 @@
 - **Config module** — centralized env loading with validation at startup
 - **SERVER_CHAT_MAP** — maps server IDs to chat channel IDs for multi-server support (env var format: `serverId:channelId,serverId:channelId`)
 - **Generator with fallback** — DeepSeek API for AI messages, hardcoded phrase list as fallback
-- **Mo persona** — bot responds as "Mo", a humble trading student, in Chinese
-- **Approval queue via Discord** — control channel plain-text messages with reaction collector
+- **Mo persona** — calm, low-key trading student; context-aware replies (trade alert → mention ticker, recap → comment overall, other → generic)
+- **Three-way approval** — ✅ approve, ❌ reject, ✏️ edit (owner types replacement, 5min timeout)
 - **Human-like behavior** — random delay (30-90s) + typing indicator (5s) before posting approved messages
 - **Heart reactions** — 50% chance to react with random heart emoji (5-30s delay) on owner's messages in chat channels
 - **Debounce** — 30s window to prevent duplicate triggers from same message
@@ -21,13 +21,14 @@
 1. Target bot (Will the ROCKET 机器人, ID 1326346496530186241) posts in monitored channel
 2. Monitor detects message (live via messageCreate OR on startup via fetch)
 3. Generator calls DeepSeek API (or falls back to Chinese phrases)
-4. Approval service posts plain-text message to control channel
-5. Owner reacts to approve/reject
-6. After random delay + typing simulation, approved message posted to correct chat channel (via SERVER_CHAT_MAP)
+4. Approval service posts plain-text message to control channel with ✅❌✏️ reactions
+5. Owner reacts: approve sends as-is, edit prompts for replacement text, reject cancels
+6. After random delay + typing simulation, final message posted to correct chat channel (via SERVER_CHAT_MAP)
 
 ## Non-Negotiables
 - Owner approval required before any message is posted
 - .env file never committed to git
+- No spaces between English and Chinese text in Mo's messages
 
 ## Key Discoveries
 - Target user 1326346496530186241 is a **bot** ("Will the ROCKET 机器人"), not a human user — do NOT filter out bot messages from target user

@@ -1,25 +1,26 @@
 # Active Context
 
 ## Current Objective
-Test multi-server support and heart reaction feature, then redeploy.
+Test all features end-to-end across both servers, then redeploy.
 
 ## Immediate Next Task
-1. Test approval flow across both servers — verify correct chat channel routing via SERVER_CHAT_MAP
-2. Verify heart reactions appear on owner's messages in chat channels (~50% chance, 5-30s delay)
-3. Remove debug logging from monitor.js
-4. Redeploy to Railway with final changes
+1. Test approval flow: ✅ approve, ❌ reject, ✏️ edit — across both servers
+2. Verify heart reactions on owner's messages in chat channels
+3. Verify Mo mentions tickers for trade alerts but not for recaps
+4. Remove debug logging from monitor.js
+5. Redeploy to Railway
 
 ## Relevant Files
-- `src/index.js` — uses discord.js-selfbot-v13 with user token auth
-- `src/approval.js` — plain-text approvals, human-like delays, server-aware chat channel routing
-- `src/generator.js` — Mo persona (Chinese), updated fallback phrases
-- `src/config.js` — parses SERVER_CHAT_MAP and derives chatChannels list
-- `src/monitor.js` — hype monitoring + random heart reactions on owner's messages
+- `src/index.js` — discord.js-selfbot-v13 with user token auth
+- `src/approval.js` — three-way approval (approve/reject/edit with 5min timeout), server-aware routing
+- `src/generator.js` — Mo persona: calm, mellow, context-aware (trade alert vs recap vs other)
+- `src/config.js` — SERVER_CHAT_MAP and chatChannels list
+- `src/monitor.js` — hype monitoring + heart reactions on owner's messages
 
 ## Constraints / Reminders
-- Now running as a selfbot (user token)
+- Selfbot (user token) — Discord ToS risk
 - Two servers: 875099277351858256 → chat 938839311510548520, 1121213949736656966 → chat 1121667438254227506
-- SERVER_CHAT_MAP in .env drives chat channel routing per server
-- Heart reactions: 50% chance, random emoji from ❤️💕😍🥰💗, 5-30s delay
-- Debug logging in monitor.js still needs removal before production
-- Railway needs redeployment after latest code changes
+- Mo persona: calm, low-key, no hype stacking, no spaces between English/Chinese
+- Generator distinguishes: trade alert (mention ticker) vs recap (comment on overall) vs other (generic)
+- Edit flow: ✏️ reaction → Mo asks for edited text → 5min timeout → sends edited version
+- Debug logging in monitor.js still needs removal
