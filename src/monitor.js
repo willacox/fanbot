@@ -6,15 +6,18 @@ const { requestApproval } = require('./approval');
 const recentTriggers = new Map();
 const DEBOUNCE_MS = 30_000;
 const MAX_AGE_MS = 10 * 60_000; // Only respond to messages within 10 minutes
-const PROFIT_ALERT_TITLE = '📈 日内短线盈利提醒';
-const MIN_PROFIT_PCT = 2.0;
+const ALERT_RULES = [
+  { title: '📈 日内短线盈利提醒', minProfit: 2.0 },
+  { title: '📈 持仓股票提醒', minProfit: 3.0 },
+];
 
-/** Only respond to profit alerts with profit > 2% */
+/** Only respond to whitelisted alert types meeting their profit threshold */
 function shouldRespond(content) {
-  if (!content.includes(PROFIT_ALERT_TITLE)) return false;
+  const rule = ALERT_RULES.find((r) => content.includes(r.title));
+  if (!rule) return false;
   const match = content.match(/Profit:\s*\+?([\d.]+)%/);
   if (!match) return false;
-  return parseFloat(match[1]) >= MIN_PROFIT_PCT;
+  return parseFloat(match[1]) >= rule.minProfit;
 }
 
 function isDuplicate(messageId) {
@@ -97,7 +100,7 @@ function setupMonitor(client) {
     // Ignore messages older than 10 minutes
     if ((Date.now() - message.createdTimestamp) > MAX_AGE_MS) return;
 
-    // Only respond to profit alerts with >= 2% profit
+    // Only respond to whitelisted alert types meeting profit threshold
     if (!shouldRespond(message.content || '')) return;
 
     // Debounce
