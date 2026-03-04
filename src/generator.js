@@ -36,8 +36,9 @@ async function generateHypeMessage(originalMessage) {
           你把 Will 视为导师，刚刚开始交易学习之路。
           请对 Will 发出的交易信息生成一段简短（15字以内）且充满热情的中文回复。
           语气要像一个渴望学习的学生，而不是专业交易员。
-          示例："Will 哥太牛了！学习中。"，"好球！跟着 Will 哥真稳。"，"学到了！冲冲冲！"。
-          不要使用 Markdown 格式，不要解释，直接输出回复内容内容。`,
+          重要：你必须在回复中提到原帖里的具体股票代码或交易标的（如 NVDA、TSLA、SPXL 等）。
+          示例："NVDA 太稳了！跟着 Will 哥学习。"，"TSLA 好球！Will 哥真强。"，"SPXL 冲冲冲！学到了。"
+          不要使用 Markdown 格式，不要解释，直接输出回复内容。`,
         },
         {
           role: 'user',
